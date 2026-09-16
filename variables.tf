@@ -4,38 +4,20 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "member_assume_role_name" {
-  description = "Name of an existing IAM role in each member account that Terraform can assume to create IAM resources. Typically OrganizationAccountAccessRole."
+variable "org_id" {
+  description = "AWS Organizations ID (e.g. o-xxxxxxxxxx). Used to scope the role trust policy to your org only."
   type        = string
-  default     = "OrganizationAccountAccessRole"
 }
 
 variable "turbonomic_account_id" {
-  description = "AWS account ID where Turbonomic is deployed. The management account role will trust this account."
+  description = "AWS account ID where IBM Turbonomic is deployed. The management role will trust this account to call sts:AssumeRole."
   type        = string
-}
-
-variable "management_account_id" {
-  description = "AWS account ID for the Organizations management (payer) account."
-  type        = string
-}
-
-variable "member_account_ids" {
-  description = "List of AWS member account IDs that Turbonomic will monitor via cross-account roles."
-  type        = list(string)
-  default     = []
 }
 
 variable "management_role_name" {
   description = "Name for the Turbonomic IAM role created in the management account."
   type        = string
   default     = "TurbonomicMonitorRole"
-}
-
-variable "member_role_name" {
-  description = "Name for the Turbonomic cross-account IAM role created in each member account."
-  type        = string
-  default     = "TurbonomicCrossAccountMonitorRole"
 }
 
 variable "policy_name" {
@@ -45,13 +27,13 @@ variable "policy_name" {
 }
 
 variable "external_id" {
-  description = "External ID used as an additional trust condition on the cross-account roles (recommended for third-party access)."
+  description = "External ID added to the role trust policy. Strongly recommended when granting third-party access. Use a UUID or hard-to-guess string."
   type        = string
   default     = ""
 }
 
 variable "tags" {
-  description = "Tags to apply to all IAM resources."
+  description = "Tags applied to all IAM resources created by this module."
   type        = map(string)
   default = {
     ManagedBy   = "Terraform"
