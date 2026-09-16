@@ -9,9 +9,9 @@ output "management_policy_arn" {
 }
 
 output "member_role_arns" {
-  description = "Map of member account ID → cross-account role ARN. These are the roles Turbonomic assumes in each member account."
+  description = "Map of member account ID to cross-account role ARN. These are the roles Turbonomic assumes in each member account."
   value = {
-    for account_id, role in aws_iam_role.turbonomic_member :
-    account_id => role.arn
+    (local.member_222) = aws_iam_role.turbonomic_member_222.arn
+    (local.member_333) = aws_iam_role.turbonomic_member_333.arn
   }
 }

@@ -1,3 +1,15 @@
+variable "aws_region" {
+  description = "AWS region for the provider. IAM is global but a region is required by the AWS provider."
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "member_assume_role_name" {
+  description = "Name of an existing IAM role in each member account that Terraform can assume to create IAM resources. Typically OrganizationAccountAccessRole."
+  type        = string
+  default     = "OrganizationAccountAccessRole"
+}
+
 variable "turbonomic_account_id" {
   description = "AWS account ID where Turbonomic is deployed. The management account role will trust this account."
   type        = string

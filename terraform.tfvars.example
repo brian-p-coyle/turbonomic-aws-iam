@@ -1,0 +1,55 @@
+# ---------------------------------------------------------------------------
+# terraform.tfvars.example
+#
+# Copy this file to terraform.tfvars and fill in your values.
+# NEVER commit terraform.tfvars to source control — it is in .gitignore.
+# ---------------------------------------------------------------------------
+
+# AWS account ID where IBM Turbonomic is deployed.
+# The management account role will trust this account to call sts:AssumeRole.
+turbonomic_account_id = "123456789012"
+
+# AWS account ID for your Organizations management (payer) account.
+# This is the account Terraform runs against by default.
+management_account_id = "111111111111"
+
+# List of AWS member account IDs that Turbonomic will monitor.
+# A cross-account IAM role and policy will be created in each account.
+# These must match the account IDs used in the provider aliases in provider.tf.
+member_account_ids = [
+  "222222222222",
+  "333333333333",
+]
+
+# AWS region to use for the provider (IAM is global but a region is required).
+aws_region = "us-east-1"
+
+# ---------------------------------------------------------------------------
+# Optional overrides — defaults are shown, only set if you need to change them
+# ---------------------------------------------------------------------------
+
+# Name of the IAM role created in the management account.
+# management_role_name = "TurbonomicMonitorRole"
+
+# Name of the cross-account IAM role created in each member account.
+# member_role_name = "TurbonomicCrossAccountMonitorRole"
+
+# The role name that Terraform will assume when configuring member accounts.
+# This is typically an existing OrganizationAccountAccessRole or a role you
+# have already set up with sufficient IAM write permissions in each member account.
+# member_assume_role_name = "OrganizationAccountAccessRole"
+
+# Name prefix used for all Turbonomic IAM policies.
+# policy_name = "TurbonomicMonitorPolicy"
+
+# External ID added to the role trust policy.
+# Strongly recommended when granting third-party (Turbonomic) access.
+# Use a UUID or a hard-to-guess string and store it securely.
+# external_id = "replace-with-a-unique-secret-string"
+
+# Tags applied to all IAM resources created by this module.
+# tags = {
+#   ManagedBy   = "Terraform"
+#   Application = "Turbonomic"
+#   Environment = "production"
+# }
