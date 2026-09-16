@@ -41,6 +41,42 @@ The management role trust policy uses `aws:PrincipalOrgID` to restrict callers t
 - AWS credentials with IAM write permissions in the **management account**
 - Your AWS Organizations ID (e.g. `o-xxxxxxxxxx`)
 - The AWS account ID where Turbonomic is deployed
+- AWS Organizations fully enabled (not just consolidated billing mode)
+
+---
+
+## Pre-flight checklist
+
+Before running `terraform apply`, verify the following. Both are silent failure points that will not surface as Terraform errors but will prevent Turbonomic from discovering member accounts.
+
+### 1. Check for blocking Service Control Policies (SCPs)
+
+The org-wide trust condition relies on Turbonomic being able to call `sts:AssumeRole` from the management account into member accounts. If any SCP in your organization restricts `sts:AssumeRole`, the role will be created successfully but Turbonomic will fail to reach member accounts at runtime.
+
+Verify no SCP blocks `sts:AssumeRole` on member accounts:
+
+```bash
+aws organizations list-policies --filter SERVICE_CONTROL_POLICY \
+  --query 'Policies[*].[Id,Name]' --output table
+```
+
+For each policy returned, review it in the AWS console under **AWS Organizations → Policies → Service Control Policies**. If `sts:AssumeRole` is explicitly denied, add an allow exception for the role ARN output by this module before proceeding.
+
+### 2. Set an External ID (strongly recommended)
+
+Before applying, generate a UUID and add it to your `terraform.tfvars`:
+
+```bash
+uuidgen
+# e.g. 3F2504E0-4F89-11D3-9A0C-0305E82C3301
+```
+
+```hcl
+# terraform.tfvars
+external_id = "3F2504E0-4F89-11D3-9A0C-0305E82C3301"
+```
+
+Give this same value to your Turbonomic administrator to enter as the **External ID** when configuring the AWS target in the Turbonomic UI. Without it, the role trust is valid but the [confused deputy protection](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html) is absent.
 
 ---
 
